@@ -48,8 +48,8 @@ public class AccountDAO {
     }
 
     public List<AccountDTO> unsafeJpaFindAccountsByCustomerId(String customerId) {
-        String jql = "from Account where customerId = '" + customerId + "'";
-        TypedQuery<Account> q = em.createQuery(jql, Account.class);
+        String jql = "from Account where customerId = :parameter0";
+        TypedQuery<Account> q = em.createQuery(jql, Account.class).setParameter("parameter0", customerId);
         return q.getResultList()
                 .stream()
                 .map(a -> AccountDTO.builder()

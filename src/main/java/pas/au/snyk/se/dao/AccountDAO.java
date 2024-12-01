@@ -1,5 +1,6 @@
 package pas.au.snyk.se.dao;
 
+import java.sql.PreparedStatement;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
@@ -24,11 +25,13 @@ public class AccountDAO {
 
     public List<AccountDTO> unsafeFindAccountsByCustomerId(String customerId) {
 
-        String sql = "select " + "customer_id,acc_number,branch_id,balance from Accounts where customer_id = '" + customerId + "'";
+        String sql = "select customer_id,acc_number,branch_id,balance from Accounts where customer_id = ?";
 
+        PreparedStatement stmt = c.prepareStatement(sql);
+        stmt.setString(1, customerId);
         try (Connection c = dataSource.getConnection();
-             ResultSet rs = c.createStatement()
-                     .executeQuery(sql)) {
+             ResultSet rs = stmt
+                     .execute()) {
             List<AccountDTO> accounts = new ArrayList<>();
             while (rs.next()) {
                 AccountDTO acc = AccountDTO.builder()
